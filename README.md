@@ -10,7 +10,7 @@ git clone https://github.com/VaVaRenik/Weather_Predictions.git
 cd Weather_Prediction
 ```
 ### 2. Создание и активация виртуального окружения
-```python -m venv venv```
+```python -m venv venv``` \\
 На Windows:
 ```venv\Scripts\activate```
 На На macOS/Linux:
