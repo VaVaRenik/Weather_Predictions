@@ -10,11 +10,17 @@ git clone https://github.com/VaVaRenik/Weather_Predictions.git
 cd Weather_Prediction
 ```
 ### 2. Создание и активация виртуального окружения
-```python -m venv venv``` \\
+```
+python -m venv venv
+```
 На Windows:
-```venv\Scripts\activate```
+```
+venv\Scripts\activate
+```
 На На macOS/Linux:
-```source venv/bin/activate```
+```
+source venv/bin/activate
+```
 ### 3. Установка зависимостей
 ```pip install -r requirements.txt```
 ### 4. Пробросьте ваш ключ от AccuWeatherAPI и токен телеграм бота
