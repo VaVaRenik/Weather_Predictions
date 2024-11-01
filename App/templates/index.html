@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Route Checker</title>
+    <style>
+        table {
+            width: 30%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.5em;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #temperature_trends_plot {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Проверка погодных условий для маршрута</h1>
+    <form action="/check-weather" method="POST">
+        <label for="start_city">Начальная точка:</label>
+        <input type="text" id="start_city" name="start_city" required><br><br>
+
+        <div id="stops">
+            <label>Промежуточные точки:</label><br>
+        </div>
+        <button type="button" onclick="addStop()">Добавить промежуточную точку</button><br><br>
+
+        <label for="end_city">Конечная точка:</label>
+        <input type="text" id="end_city" name="end_city" required><br><br>
+
+        <button type="submit">Проверить погоду</button>
+    </form>
+
+    {% if result %}
+        <h2>Результат оценки погоды:</h2>
+        <p>{{ result }}</p>
+    {% endif %}
+
+    {% if start_weather_info %}
+        <h3>Погода в начальной точке:</h3>
+        <table>
+            {{ start_weather_info|safe }}
+        </table>
+        {% if start_gauge_json %}
+        <div id="start_gauge_plot"></div>
+        <script>
+            Plotly.newPlot('start_gauge_plot', {{ start_gauge_json | safe }}.data, {{ start_gauge_json | safe }}.layout);
+        </script>
+        {% endif %}
+    {% endif %}
+
+    {% if stop_weather_infos %}
+        <h3>Погода в промежуточных точках:</h3>
+        {% for info in stop_weather_infos %}
+            <h4>{{ info.city }}</h4>
+            <table>
+                {{ info.weather | safe }}
+            </table>
+            {% if info.gauge_json %}
+                <div id="gauge_plot_{{ loop.index }}"></div>
+                <script>
+                    const gaugeData = {{ info.gauge_json | safe }};
+                    Plotly.newPlot('gauge_plot_{{ loop.index }}', gaugeData.data, gaugeData.layout);
+                </script>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+
+    {% if end_weather_info %}
+        <h3>Погода в конечной точке:</h3>
+        <table>
+            {{ end_weather_info|safe }}
+        </table>
+        {% if end_gauge_json %}
+        <div id="end_gauge_plot"></div>
+        <script>
+            Plotly.newPlot('end_gauge_plot', {{ end_gauge_json | safe }}.data, {{ end_gauge_json | safe }}.layout);
+        </script>
+        {% endif %}
+    {% endif %}
+
+    <script>
+        function addStop() {
+            const stopsDiv = document.getElementById("stops");
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = "stop_city";
+            input.placeholder = "Промежуточная точка";
+            stopsDiv.appendChild(input);
+            stopsDiv.appendChild(document.createElement("br"));
+        }
+    </script>
+
+    {% if temperature_trends_json %}
+        <h2>График температурных трендов:</h2>
+        <div id="temperature_trends_plot"></div>
+        <script>
+            const temperatureTrends = {{ temperature_trends_json | safe }};
+            Plotly.newPlot('temperature_trends_plot', temperatureTrends.data, temperatureTrends.layout);
+        </script>
+    {% endif %}
+</body>
+</html>
+
